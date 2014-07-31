@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MeetMe</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<% if user_signed_in? %>
+	<%= link_to "Sign out", destroy_user_session_path, :method => :delete %>
+<%else%>
+	<%=form_for(:user, as: :user, url: session_path(:user)) do |f| %>
+  <div class="form-inputs">
+    <%= f.text_field :email, required: false, autofocus: true %>
+    <%= f.text_field :password, required: false %>
+  </div>
+
+  <div class="form-actions">
+    <div><%= f.submit "Sign in" %></div>
+  </div>
+<% end %>
+<% end %>
+
+<%= yield %>
+
+</body>
+</html>
