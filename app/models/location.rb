@@ -1,5 +1,6 @@
 class Location < ActiveRecord::Base
 	has_many :visits
+	belongs_to :user
 	has_many :comments
 	accepts_nested_attributes_for :comments,  :allow_destroy => true, reject_if: proc { |attributes| attributes['description'].blank? }
 

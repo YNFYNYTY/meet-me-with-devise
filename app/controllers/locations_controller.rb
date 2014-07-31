@@ -2,8 +2,11 @@ class LocationsController < ApplicationController
 
 	def index
 		# @locations = Location.last_created(7)
-		@locations = Location.all
-		@items = [1,2,3,4]
+		if current_user
+			@locations = Location.where "user_id =#{current_user.id}"
+		else
+			@locations = Location.all
+		end
 	end
 
 	def show
@@ -12,14 +15,14 @@ class LocationsController < ApplicationController
 		render plain: 'Sorry, not found', status: 404 unless @location
 	end
 
-	def new 
+	def new
 		@location = Location.new
 		2.times { @location.comments.build}
-	end 
+	end
 
 	def create
 		@location = Location.new location_params
-		
+		@location.user = current_user
 		 if @location.save
 		 	@location.reload.comments
       		redirect_to action: 'index', controller:'locations'
@@ -37,7 +40,7 @@ class LocationsController < ApplicationController
 
 	def update
        @location = Location.find(params[:id])
-      	
+
        if @location.update location_params
        	 @location.reload.comments
          redirect_to action: 'index', controller:'locations'
@@ -48,7 +51,7 @@ class LocationsController < ApplicationController
 
 	def destroy
 		@location = Location.find(params[:id])
-     
+
       if @location.destroy()
          redirect_to action: 'index', controller:'locations', :notice => "the visit has been delete"
       else
@@ -59,7 +62,7 @@ class LocationsController < ApplicationController
 	private
 
 	def location_params
-		params.require(:location).permit(:name, :city, :country, comments_attributes: [:id, :description, :_destroy])
+		params.require(:location).permit(:name, :city, :country, :user_id, comments_attributes: [:id, :description, :_destroy])
 	end
-	
+
 end
